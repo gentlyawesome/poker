@@ -1,17 +1,48 @@
 const express = require("express");
 const app = express();
 
+const http = require('http');
+const https = require('https');
 const path = require('path');
 const fs = require('fs');
 const bodyParser = require('body-parser');
 const logger = require('morgan');
 
-const WebSocket = require('ws');
-const wss = new WebSocket('ws://192.99.236.78:8089');
+// ############################################
+let key;
+let cert;
 
-wss.on('connect', function(){
-  console.log('connected to server');
-});
+try{
+  key = fs.readFileSync('key.pem');
+}catch(err){
+  key == null
+}
+
+try{
+  cert = fs.readFileSync('cert.pem');
+}catch(err){
+  cert  == null
+}
+
+function checkSSL(key, cert){
+  var server;
+  if(key != null && cert != null){
+    const serverConfig = {
+      key: key,
+      cert: cert
+    };
+    server = https.createServer(serverConfig,app);
+    console.log("Starting https Server");
+  }else{
+    server = http.createServer(app);
+    console.log("Starting http Server");
+  }
+
+  return server;
+}
+
+const server = checkSSL(key, cert);
+// ############################################
 
 
 app.use(function(req, res, next) {
@@ -33,6 +64,6 @@ app.get("/api/ping", function(req, res) {
 app.use(express.static(__dirname + "/public"));
 
 let port = process.env.PORT || 5051;
-app.listen(port, function() {
+server.listen(port, function() {
   console.log("Listening on " + port);
 });

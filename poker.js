@@ -1341,7 +1341,8 @@ function poker(connection) {
             bI = "[" + bI + "]"
         }
         //g = g + "://" + bI + ":" + aZ.params.packetPort;
-        g = g + "://" + "192.99.236.78" + ":" + aZ.params.packetPort;
+        g = "wss://" + "192.99.236.78" + ":" + aZ.params.packetPort;
+        //g = g + "://" + "192.99.236.78" + ":" + aZ.params.packetPort;
         l("MSG Connecting to " + g + " ...");
         aZ.ws = new WebSocket(g);
         aZ.ws.onopen = function() {
